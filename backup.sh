@@ -10,13 +10,13 @@ BACKUP_FILE_MAX_AGE_DAYS=30
 # Arguments:
 #   Directory to clean
 ##################################################
-cleaup() {
+cleanup() {
   find "$1" -mtime "+${BACKUP_FILE_MAX_AGE_DAYS}" -type f -delete
 }
 
 REMARK_POD_LABEL="app=remark42"
 REMARK_NAMESPACE="remark42"
-REMARK_BACKUP_DIR="/mnt/backup-k8s"
+REMARK_BACKUP_DIR="/mnt/backup-k8s/remark42"
 
 ##################################################
 # Copy automatic Remark42 backup files from pod.
@@ -28,8 +28,7 @@ REMARK_BACKUP_DIR="/mnt/backup-k8s"
 #   None
 ##################################################
 backup_remark42() {
-  REMARK_POD_LABEL="app=remark42"
-  REMARK_NAMESPACE="remark42"
+  mkdir -p "${REMARK_BACKUP_DIR}"
   # -o name doesn't work because "kubectl cp" doesn't support the "pod/" prefix
   pod=$(kubectl get pod -l "${REMARK_POD_LABEL}" -n "${REMARK_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
   kubectl cp "${REMARK_NAMESPACE}/${pod}:var/backup" "${REMARK_BACKUP_DIR}"
