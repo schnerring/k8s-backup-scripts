@@ -52,7 +52,7 @@ backup_remark42() {
 backup_postgres() {
   mkdir -p "${POSTGRES_BACKUP_DIR}"
   pod=$(kubectl get pod -l "${POSTGRES_POD_LABEL}" -n "${POSTGRES_NAMESPACE}" -o name)
-  kubectl exec -it -n "${POSTGRES_NAMESPACE}" "$pod" -- pg_dumpall | gzip > "${POSTGRES_BACKUP_DIR}/postgres_$(date +%y%m%d%H%M).sql.gz"
+  kubectl exec -it -n "${POSTGRES_NAMESPACE}" "$pod" -- pg_dumpall | gzip > "${POSTGRES_BACKUP_DIR}/pg_dumpall_$(date +%y%m%d).sql.gz"
 }
 
 ##################################################
