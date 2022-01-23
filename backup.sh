@@ -12,8 +12,12 @@ POSTGRES_POD_LABEL="app=postgres"
 POSTGRES_NAMESPACE="postgres"
 POSTGRES_BACKUP_DIR="/mnt/backup-k8s/postgres"
 
+MATRIX_POD_LABEL="app=matrix"
+MATRIX_NAMESPACE="matrix"
+MATRIX_BACKUP_DIR="/mnt/backup-k8s/matrix_media"
+
 ##################################################
-# Clean files older than BACKUP_FILE_MAX_AGE_DAYS days.
+# Cleanup files older than BACKUP_FILE_MAX_AGE_DAYS days.
 # from BACKUP_DIR
 # Globals:
 #   BACKUP_FILE_MAX_AGE_DAYS
@@ -56,10 +60,25 @@ backup_postgres() {
 }
 
 ##################################################
+# Backup Matrix (Synapse) media files.
+# Globals:
+#   MATRIX_POD_LABEL
+#   MATRIX_NAMESPACE
+#   MATRIX_BACKUP_DIR
+# Arguments:
+#   None
+##################################################
+backup_matrix() {
+  mkdir -p "${MATRIX_BACKUP_DIR}"
+  pod=$(kubectl get pod -l "${MATRIX_POD_LABEL}" -n "${MATRIX_NAMESPACE}" -o name)
+}
+
+##################################################
 # Main function of script.
 # Globals:
 #   REMARK_BACKUP_DIR
 #   POSTGRES_BACKUP_DIR
+#   MATRIX_BACKUP_DIR
 # Arguments:
 #   None
 ##################################################
@@ -69,6 +88,9 @@ main() {
 
   backup_postgres || exit 1
   cleanup "${POSTGRES_BACKUP_DIR}" || exit 1
+
+  backup_matrix_media || exit 1
+  cleanup "${MATRIX_BACKUP_DIR}"
 }
 
 # Entrypoint
