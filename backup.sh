@@ -14,7 +14,7 @@ POSTGRES_BACKUP_DIR="/mnt/backup-k8s/postgres"
 
 MATRIX_POD_LABEL="app=matrix"
 MATRIX_NAMESPACE="matrix"
-MATRIX_BACKUP_DIR="/mnt/backup-k8s/matrix_media"
+MATRIX_BACKUP_DIR="/mnt/backup-k8s/matrix"
 
 ##################################################
 # Cleanup files older than BACKUP_FILE_MAX_AGE_DAYS days.
@@ -68,10 +68,13 @@ backup_postgres() {
 # Arguments:
 #   None
 ##################################################
-backup_matrix_media() {
+backup_matrix() {
   mkdir -p "${MATRIX_BACKUP_DIR}"
   pod=$(kubectl get pod -l "${MATRIX_POD_LABEL}" -n "${MATRIX_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
-  kubectl cp "${MATRIX_NAMESPACE}/${pod}:/data/media_store" "${MATRIX_BACKUP_DIR}/media_store_$(date +%y%m%d)"
+  tmp="${MATRIX_BACKUP_DIR}/tmp"
+  kubectl cp "${MATRIX_NAMESPACE}/${pod}:/data/media_store" "${tmp}"
+  tar -zcvf "${MATRIX_BACKUP_DIR}/media_store_$(date +%y%m%d).tar.gz" "${tmp}"
+  rm -rf "${tmp}"
 }
 
 ##################################################
@@ -90,8 +93,8 @@ main() {
   backup_postgres || exit 1
   cleanup "${POSTGRES_BACKUP_DIR}" || exit 1
 
-  backup_matrix_media || exit 1
-  cleanup "${MATRIX_BACKUP_DIR}"
+  backup_matrix || exit 1
+  cleanup "${MATRIX_BACKUP_DIR}" || exit 1
 }
 
 # Entrypoint
