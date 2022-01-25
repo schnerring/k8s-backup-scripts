@@ -68,7 +68,7 @@ backup_postgres() {
 # Arguments:
 #   None
 ##################################################
-backup_matrix() {
+backup_matrix_media() {
   mkdir -p "${MATRIX_BACKUP_DIR}"
   pod=$(kubectl get pod -l "${MATRIX_POD_LABEL}" -n "${MATRIX_NAMESPACE}" -o name)
   kubectl cp "${MATRIX_NAMESPACE}/${pod}:/data/media_store" "${MATRIX_BACKUP_DIR}/media_store_$(date +%y%m%d)"
