@@ -61,7 +61,8 @@ backup_remark42() {
 backup_postgres() {
   mkdir -p "${POSTGRES_BACKUP_DIR}"
   pod=$(kubectl get pod -l "${POSTGRES_POD_LABEL}" -n "${POSTGRES_NAMESPACE}" -o name)
-  kubectl exec -i -n "${POSTGRES_NAMESPACE}" "$pod" -- pg_dumpall | gzip > "${POSTGRES_BACKUP_DIR}/pg_dumpall_$(date +%y%m%d).sql.gz"
+  kubectl exec -i -n "${POSTGRES_NAMESPACE}" "$pod" -- \
+    pg_dumpall | gzip > "${POSTGRES_BACKUP_DIR}/pg_dumpall_$(date +%y%m%d).sql.gz"
 }
 
 ##################################################
@@ -96,7 +97,7 @@ backup_plausible() {
   mkdir -p "${PLAUSIBLE_BACKUP_DIR}"
   pod=$(kubectl get pod -l "${PLAUSIBLE_EVENT_DATA_POD_LABEL}" -n "${PLAUSIBLE_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
 
-  # Install clickhouse-backup to /tmp
+  # Check if clickhouse-backup was already downloaded
   if kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- \
     wget \
       --quiet \
@@ -105,23 +106,24 @@ backup_plausible() {
       --output-document=/tmp/clickhouse-backup.tar.gz \
       "https://github.com/AlexAkulov/clickhouse-backup/releases/download/v${CLICKHOUSE_BACKUP_VERSION}/clickhouse-backup-linux-amd64.tar.gz" 2> /dev/null; then
 
-    kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- tar -zxvf /tmp/clickhouse-backup.tar.gz --directory=/tmp --strip-components=3
+    # Extract clickhouse-backup to /tmp
+    kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- \
+      tar -zxvf /tmp/clickhouse-backup.tar.gz --directory=/tmp --strip-components=3
   fi
 
   backup_name=clickhouse-backup_$(date +%y%m%d)
 
-  # TODO?
-  # kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- \
-  #   /tmp/clickhouse-backup clean
-
+  # Create backup in pod
   kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- \
     /tmp/clickhouse-backup create "${backup_name}"
 
+  # Download backup from pod
   tmp="${PLAUSIBLE_BACKUP_DIR}/tmp"
   kubectl cp "${PLAUSIBLE_NAMESPACE}/${pod}:/var/lib/clickhouse/backup/${backup_name}" "${tmp}"
   tar -zcvf "${PLAUSIBLE_BACKUP_DIR}/${backup_name}.tar.gz" "${tmp}"
   rm -rf "${tmp}"
 
+  # Delete backup in pod
   kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- \
     /tmp/clickhouse-backup delete local "${backup_name}"
 }
@@ -137,17 +139,17 @@ backup_plausible() {
 #   None
 ##################################################
 main() {
-  # backup_remark42 || exit 1
-  # cleanup "${REMARK_BACKUP_DIR}" || exit 1
+  backup_remark42 || exit 1
+  cleanup "${REMARK_BACKUP_DIR}" || exit 1
 
-  # backup_postgres || exit 1
-  # cleanup "${POSTGRES_BACKUP_DIR}" || exit 1
+  backup_postgres || exit 1
+  cleanup "${POSTGRES_BACKUP_DIR}" || exit 1
 
-  # backup_matrix || exit 1
-  # cleanup "${MATRIX_BACKUP_DIR}" || exit 1
+  backup_matrix || exit 1
+  cleanup "${MATRIX_BACKUP_DIR}" || exit 1
 
   backup_plausible || exit 1
-  # cleanup "${PLAUSIBLE_BACKUP_DIR}" || exit 1
+  cleanup "${PLAUSIBLE_BACKUP_DIR}" || exit 1
 }
 
 # Entrypoint
