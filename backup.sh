@@ -6,10 +6,6 @@
 
 # Constants
 
-POSTGRES_POD_LABEL="app=postgres"
-POSTGRES_NAMESPACE="postgres"
-POSTGRES_BACKUP_DIR="/mnt/backup-k8s/postgres"
-
 MATRIX_POD_LABEL="app=matrix"
 MATRIX_NAMESPACE="matrix"
 MATRIX_BACKUP_DIR="/mnt/backup-k8s/matrix"
@@ -18,22 +14,6 @@ PLAUSIBLE_EVENT_DATA_POD_LABEL="app=event-data"
 PLAUSIBLE_NAMESPACE="plausible"
 PLAUSIBLE_BACKUP_DIR="/mnt/backup-k8s/plausible"
 CLICKHOUSE_BACKUP_VERSION="1.3.1"
-
-##################################################
-# Backup all Postgres databases.
-# Globals:
-#   POSTGRES_POD_LABEL
-#   POSTGRES_NAMESPACE
-#   POSTGRES_BACKUP_DIR
-# Arguments:
-#   None
-##################################################
-backup_postgres() {
-  mkdir -p "${POSTGRES_BACKUP_DIR}"
-  pod=$(kubectl get pod -l "${POSTGRES_POD_LABEL}" -n "${POSTGRES_NAMESPACE}" -o name)
-  kubectl exec -i -n "${POSTGRES_NAMESPACE}" "$pod" -- \
-    pg_dumpall | gzip > "${POSTGRES_BACKUP_DIR}/pg_dumpall_$(date +%y%m%d).sql.gz"
-}
 
 ##################################################
 # Backup Matrix (Synapse) media files.
@@ -101,16 +81,12 @@ backup_plausible() {
 ##################################################
 # Main function of script.
 # Globals:
-#   POSTGRES_BACKUP_DIR
 #   MATRIX_BACKUP_DIR
 #   PLAUSIBLE_BACKUP_DIR
 # Arguments:
 #   None
 ##################################################
 main() {
-  backup_postgres || exit 1
-  cleanup "${POSTGRES_BACKUP_DIR}" || exit 1
-
   backup_matrix || exit 1
   cleanup "${MATRIX_BACKUP_DIR}" || exit 1
 

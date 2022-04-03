@@ -12,4 +12,10 @@ REMARK_NAMESPACE="remark42"
 REMARK_BACKUP_DIR="/mnt/backup-k8s/remark42"
 
 30 2 * * * /path/to/repo/backup-remark42.sh
+
+POSTGRES_POD_LABEL="app=postgres"
+POSTGRES_NAMESPACE="postgres"
+POSTGRES_BACKUP_DIR="/mnt/backup-k8s/postgres"
+
+30 2 * * * /path/to/repo/backup-postgres.sh
 ```

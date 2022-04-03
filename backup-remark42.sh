@@ -29,7 +29,7 @@ backup_remark42() {
 ##################################################
 main() {
   backup_remark42 || exit 1
-  cleanup "${REMARK_BACKUP_DIR}"
+  cleanup "${REMARK_BACKUP_DIR}" || exit 1
 }
 
 # Entrypoint
