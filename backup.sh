@@ -6,10 +6,6 @@
 
 # Constants
 
-REMARK_POD_LABEL="app=remark42"
-REMARK_NAMESPACE="remark42"
-REMARK_BACKUP_DIR="/mnt/backup-k8s/remark42"
-
 POSTGRES_POD_LABEL="app=postgres"
 POSTGRES_NAMESPACE="postgres"
 POSTGRES_BACKUP_DIR="/mnt/backup-k8s/postgres"
@@ -22,22 +18,6 @@ PLAUSIBLE_EVENT_DATA_POD_LABEL="app=event-data"
 PLAUSIBLE_NAMESPACE="plausible"
 PLAUSIBLE_BACKUP_DIR="/mnt/backup-k8s/plausible"
 CLICKHOUSE_BACKUP_VERSION="1.3.1"
-
-##################################################
-# Copy automatic Remark42 backup files from pod.
-# Globals:
-#   REMARK_POD_LABEL
-#   REMARK_NAMESPACE
-#   REMARK_BACKUP_DIR
-# Arguments:
-#   None
-##################################################
-backup_remark42() {
-  mkdir -p "${REMARK_BACKUP_DIR}"
-  # -o name doesn't work because "kubectl cp" doesn't support the "pod/" prefix
-  pod=$(kubectl get pod -l "${REMARK_POD_LABEL}" -n "${REMARK_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
-  kubectl cp "${REMARK_NAMESPACE}/${pod}:var/backup" "${REMARK_BACKUP_DIR}"
-}
 
 ##################################################
 # Backup all Postgres databases.
@@ -121,7 +101,6 @@ backup_plausible() {
 ##################################################
 # Main function of script.
 # Globals:
-#   REMARK_BACKUP_DIR
 #   POSTGRES_BACKUP_DIR
 #   MATRIX_BACKUP_DIR
 #   PLAUSIBLE_BACKUP_DIR
@@ -129,9 +108,6 @@ backup_plausible() {
 #   None
 ##################################################
 main() {
-  backup_remark42 || exit 1
-  cleanup "${REMARK_BACKUP_DIR}" || exit 1
-
   backup_postgres || exit 1
   cleanup "${POSTGRES_BACKUP_DIR}" || exit 1
 
