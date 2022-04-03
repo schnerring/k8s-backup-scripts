@@ -6,32 +6,10 @@
 
 # Constants
 
-MATRIX_POD_LABEL="app=matrix"
-MATRIX_NAMESPACE="matrix"
-MATRIX_BACKUP_DIR="/mnt/backup-k8s/matrix"
-
 PLAUSIBLE_EVENT_DATA_POD_LABEL="app=event-data"
 PLAUSIBLE_NAMESPACE="plausible"
 PLAUSIBLE_BACKUP_DIR="/mnt/backup-k8s/plausible"
 CLICKHOUSE_BACKUP_VERSION="1.3.1"
-
-##################################################
-# Backup Matrix (Synapse) media files.
-# Globals:
-#   MATRIX_POD_LABEL
-#   MATRIX_NAMESPACE
-#   MATRIX_BACKUP_DIR
-# Arguments:
-#   None
-##################################################
-backup_matrix() {
-  mkdir -p "${MATRIX_BACKUP_DIR}"
-  pod=$(kubectl get pod -l "${MATRIX_POD_LABEL}" -n "${MATRIX_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
-  tmp="${MATRIX_BACKUP_DIR}/tmp"
-  kubectl cp "${MATRIX_NAMESPACE}/${pod}:/data/media_store" "${tmp}"
-  tar -zcvf "${MATRIX_BACKUP_DIR}/media_store_$(date +%y%m%d).tar.gz" "${tmp}"
-  rm -rf "${tmp}"
-}
 
 ##################################################
 # Backup Plausible Clickhouse event database.
@@ -81,15 +59,11 @@ backup_plausible() {
 ##################################################
 # Main function of script.
 # Globals:
-#   MATRIX_BACKUP_DIR
 #   PLAUSIBLE_BACKUP_DIR
 # Arguments:
 #   None
 ##################################################
 main() {
-  backup_matrix || exit 1
-  cleanup "${MATRIX_BACKUP_DIR}" || exit 1
-
   backup_plausible || exit 1
   cleanup "${PLAUSIBLE_BACKUP_DIR}" || exit 1
 }

@@ -18,4 +18,10 @@ POSTGRES_NAMESPACE="postgres"
 POSTGRES_BACKUP_DIR="/mnt/backup-k8s/postgres"
 
 30 2 * * * /path/to/repo/backup-postgres.sh
+
+MATRIX_POD_LABEL="app=matrix"
+MATRIX_NAMESPACE="matrix"
+MATRIX_BACKUP_DIR="/mnt/backup-k8s/matrix"
+
+30 2 * * * /path/to/repo/backup-matrix.sh
 ```
