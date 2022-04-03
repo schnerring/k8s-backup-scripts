@@ -4,13 +4,6 @@
 # See https://stackoverflow.com/questions/29832037/how-to-get-script-directory-in-posix-sh
 . "$(dirname "$0")/cleanup.sh"
 
-# Constants
-
-PLAUSIBLE_EVENT_DATA_POD_LABEL="app=event-data"
-PLAUSIBLE_NAMESPACE="plausible"
-PLAUSIBLE_BACKUP_DIR="/mnt/backup-k8s/plausible"
-CLICKHOUSE_BACKUP_VERSION="1.3.1"
-
 ##################################################
 # Backup Plausible Clickhouse event database.
 # Globals:

@@ -24,4 +24,11 @@ MATRIX_NAMESPACE="matrix"
 MATRIX_BACKUP_DIR="/mnt/backup-k8s/matrix"
 
 30 2 * * * /path/to/repo/backup-matrix.sh
+
+PLAUSIBLE_EVENT_DATA_POD_LABEL="app=event-data"
+PLAUSIBLE_NAMESPACE="plausible"
+PLAUSIBLE_BACKUP_DIR="/mnt/backup-k8s/plausible"
+CLICKHOUSE_BACKUP_VERSION="1.3.1"
+
+30 2 * * * /path/to/repo/backup-plausible.sh
 ```
