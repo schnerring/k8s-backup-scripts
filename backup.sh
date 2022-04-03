@@ -1,8 +1,10 @@
 #!/bin/sh
 
-# Constants
+# TODO
+# See https://stackoverflow.com/questions/29832037/how-to-get-script-directory-in-posix-sh
+. "$(dirname "$0")/cleanup.sh"
 
-BACKUP_FILE_MAX_AGE_DAYS=30
+# Constants
 
 REMARK_POD_LABEL="app=remark42"
 REMARK_NAMESPACE="remark42"
@@ -20,18 +22,6 @@ PLAUSIBLE_EVENT_DATA_POD_LABEL="app=event-data"
 PLAUSIBLE_NAMESPACE="plausible"
 PLAUSIBLE_BACKUP_DIR="/mnt/backup-k8s/plausible"
 CLICKHOUSE_BACKUP_VERSION="1.3.1"
-
-##################################################
-# Cleanup files older than BACKUP_FILE_MAX_AGE_DAYS days.
-# from BACKUP_DIR
-# Globals:
-#   BACKUP_FILE_MAX_AGE_DAYS
-# Arguments:
-#   Directory to clean
-##################################################
-cleanup() {
-  find "$1" -mtime "+${BACKUP_FILE_MAX_AGE_DAYS}" -type f -delete
-}
 
 ##################################################
 # Copy automatic Remark42 backup files from pod.
