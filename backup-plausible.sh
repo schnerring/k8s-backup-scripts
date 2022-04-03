@@ -4,8 +4,10 @@
 # See https://stackoverflow.com/questions/29832037/how-to-get-script-directory-in-posix-sh
 . "$(dirname "$0")/cleanup.sh"
 
+CLICKHOUSE_BACKUP_VERSION="1.3.1"
+
 ##################################################
-# Backup Plausible Clickhouse event database.
+# Backup Plausible ClickHouse event database.
 # Globals:
 #   PLAUSIBLE_EVENT_DATA_POD_LABEL
 #   PLAUSIBLE_NAMESPACE
