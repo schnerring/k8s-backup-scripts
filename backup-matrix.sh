@@ -2,16 +2,13 @@
 
 # TODO
 # See https://stackoverflow.com/questions/29832037/how-to-get-script-directory-in-posix-sh
-. "$(dirname "$0")/cleanup.sh"
-
-NOW=$(date +%y%m%d)
+. "$(dirname "$0")/common.sh"
 
 ##################################################
 # Backup Matrix Synapse Postgres database.
 # Globals:
 #   MATRIX_BACKUP_DIR
 #   MATRIX_DB
-#   NOW
 #   POSTGRES_LABEL
 #   POSTGRES_NAMESPACE
 # Arguments:
@@ -21,7 +18,7 @@ backup_database() {
   echo "Backing up database ..."
   pod=$(kubectl get pod -l "${POSTGRES_LABEL}" -n "${POSTGRES_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
   kubectl exec -i -n "${POSTGRES_NAMESPACE}" "$pod" -- \
-    pg_dump -Fc "${MATRIX_DB}" >"${MATRIX_BACKUP_DIR}/${NOW}-db.dump"
+    pg_dump -Fc "${MATRIX_DB}" >"${MATRIX_BACKUP_DIR}/$(date +%y%m%d)-postgres-${MATRIX_DB}.dump"
 }
 
 ##################################################
@@ -30,7 +27,6 @@ backup_database() {
 #   MATRIX_BACKUP_DIR
 #   MATRIX_LABEL
 #   MATRIX_NAMESPACE
-#   NOW
 # Arguments:
 #   None
 ##################################################
@@ -39,7 +35,7 @@ backup_media() {
   pod=$(kubectl get pod -l "${MATRIX_LABEL}" -n "${MATRIX_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
   tmp="${MATRIX_BACKUP_DIR}/tmp"
   kubectl cp "${MATRIX_NAMESPACE}/${pod}:/data/media_store" "${tmp}"
-  tar -zcvf "${MATRIX_BACKUP_DIR}/${NOW}-media.tar.gz" "${tmp}"
+  tar -zcvf "${MATRIX_BACKUP_DIR}/$(date +%y%m%d)-media.tar.gz" "${tmp}"
   rm -rf "${tmp}"
 }
 
@@ -51,7 +47,7 @@ backup_media() {
 #   None
 ##################################################
 main() {
-  echo "Backing up Matrix Synapse: ${NOW} ..."
+  echo "Backing up Matrix Synapse ..."
 
   mkdir -p "${MATRIX_BACKUP_DIR}"
 

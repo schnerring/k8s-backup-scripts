@@ -2,7 +2,7 @@
 
 # TODO
 # See https://stackoverflow.com/questions/29832037/how-to-get-script-directory-in-posix-sh
-. "$(dirname "$0")/cleanup.sh"
+. "$(dirname "$0")/common.sh"
 
 ##################################################
 # Copy automatic Remark42 backup files from pod.

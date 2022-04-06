@@ -2,7 +2,7 @@
 
 # TODO
 # See https://stackoverflow.com/questions/29832037/how-to-get-script-directory-in-posix-sh
-. "$(dirname "$0")/confirm.sh"
+. "$(dirname "$0")/common.sh"
 
 ##################################################
 # Copy backup to Remark42 pod and restore it.

@@ -2,9 +2,26 @@
 
 # TODO
 # See https://stackoverflow.com/questions/29832037/how-to-get-script-directory-in-posix-sh
-. "$(dirname "$0")/cleanup.sh"
+. "$(dirname "$0")/common.sh"
 
 CLICKHOUSE_BACKUP_VERSION="1.3.1"
+
+##################################################
+# Backup Plausible Postgres database.
+# Globals:
+#   PLAUSIBLE_BACKUP_DIR
+#   PLAUSIBLE_DB
+#   POSTGRES_LABEL
+#   POSTGRES_NAMESPACE
+# Arguments:
+#   None
+##################################################
+backup_postgres() {
+  echo "Backing up Postgres ..."
+  pod=$(kubectl get pod -l "${POSTGRES_LABEL}" -n "${POSTGRES_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
+  kubectl exec -i -n "${POSTGRES_NAMESPACE}" "$pod" -- \
+    pg_dump -Fc "${PLAUSIBLE_DB}" >"${PLAUSIBLE_BACKUP_DIR}/$(date +%y%m%d)-postgres-${PLAUSIBLE_DB}.dump"
+}
 
 ##################################################
 # Backup Plausible ClickHouse event database.
@@ -16,7 +33,9 @@ CLICKHOUSE_BACKUP_VERSION="1.3.1"
 # Arguments:
 #   None
 ##################################################
-backup_plausible() {
+backup_clickhouse() {
+  echo "Backing up ClickHouse ..."
+
   mkdir -p "${PLAUSIBLE_BACKUP_DIR}"
   pod=$(kubectl get pod -l "${PLAUSIBLE_EVENT_DATA_LABEL}" -n "${PLAUSIBLE_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
 
@@ -34,7 +53,7 @@ backup_plausible() {
       tar -zxvf /tmp/clickhouse-backup.tar.gz --directory=/tmp --strip-components=3
   fi
 
-  backup_name=clickhouse-backup_$(date +%y%m%d)
+  backup_name=$(date +%y%m%d)-clickhouse
 
   # Create backup in pod
   kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- \
@@ -59,8 +78,21 @@ backup_plausible() {
 #   None
 ##################################################
 main() {
-  backup_plausible || exit 1
-  cleanup "${PLAUSIBLE_BACKUP_DIR}" || exit 1
+  if ! backup_postgres; then
+    echo "Postgres backup failed." >&2
+    do_cleanup=false
+  fi
+
+  if ! backup_clickhouse; then
+    echo "ClickHouse backup failed." >&2
+    do_cleanup=false
+  fi
+
+  if [ "${do_cleanup}" = true ]; then
+    cleanup "${PLAUSIBLE_BACKUP_DIR}"
+  fi
+
+  echo "Done."
 }
 
 # Entrypoint
