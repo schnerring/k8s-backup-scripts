@@ -7,33 +7,27 @@
 ##################################################
 # Restore Plausible Postgres database.
 # Globals:
-#   PLAUSIBLE_LABEL
-#   PLAUSIBLE_NAMESPACE
 #   PLAUSIBLE_BACKUP_DIR
+#   PLAUSIBLE_DB
+#   POSTGRES_LABEL
+#   POSTGRES_NAMESPACE
 # Arguments:
 #   None
 ##################################################
 restore_postgres() {
   echo "Restoring Postgres ..."
 
-  pod=$(get_pod_name "${PLAUSIBLE_LABEL}" "${PLAUSIBLE_NAMESPACE}")
+  pod=$(get_pod_name "${POSTGRES_LABEL}" "${POSTGRES_NAMESPACE}")
 
   # Get latest Postgres dump
-  backup_source_path=$(find "${PLAUSIBLE_BACKUP_DIR}" -name '*.dump' | sort | tail -n1)
+  backup_source_path=$(find "${PLAUSIBLE_BACKUP_DIR}" -name "*-postgres-${PLAUSIBLE_DB}.dump" | sort | tail -n1)
 
   # Confirmation prompt
   confirm "${backup_source_path}"
 
-  # Copy backup to pod
-  backup_filename=$(basename "${backup_source_path}")
-
-  # Extract database name from filename
-  # E.g., `plausible` from `220406-postgres-plausible.dump`
-  db=$(printf '%s' "${backup_filename}" | awk -F'-' '{ print $3 }' | awk -F'.' '{ print $1 }')
-
   # Restore the backup
-  kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- \
-    pg_restore -d "${db}2" <"${backup_source_path}"
+  kubectl exec -i -n "${POSTGRES_NAMESPACE}" "$pod" -- \
+    pg_restore -d "${PLAUSIBLE_DB}_test" <"${backup_source_path}"
 }
 
 ##################################################
