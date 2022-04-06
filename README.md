@@ -30,7 +30,7 @@ POSTGRES_NAMESPACE="postgres"
 MATRIX_LABEL="app=matrix"
 MATRIX_NAMESPACE="matrix"
 MATRIX_BACKUP_DIR="/mnt/backup-k8s/matrix"
-MATRIX_DB_NAME="synapse"
+MATRIX_DB="synapse"
 
 30 2 * * * /path/to/repo/backup-matrix.sh 1> /path/to/logs/backup-matrix.log 2> /path/to/logs/backup-matrix.error
 
@@ -60,6 +60,6 @@ setenv POSTGRES_NAMESPACE postgres
 
 setenv MATRIX_LABEL app=matrix
 setenv MATRIX_NAMESPACE matrix
-setenv MATRIX_DB_NAME synapse
+setenv MATRIX_DB synapse
 setenv MATRIX_BACKUP_DIR /mnt/backup-k8s/matrix
 ```
