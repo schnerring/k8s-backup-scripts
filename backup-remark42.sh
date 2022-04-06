@@ -16,7 +16,7 @@
 backup_remark42() {
   mkdir -p "${REMARK_BACKUP_DIR}"
   pod=$(kubectl get pod -l "${REMARK_LABEL}" -n "${REMARK_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
-  kubectl cp "${REMARK_NAMESPACE}/${pod}:var/backup" "${REMARK_BACKUP_DIR}"
+  kubectl cp "${REMARK_NAMESPACE}/${pod}:/var/backup" "${REMARK_BACKUP_DIR}"
 }
 
 ##################################################
