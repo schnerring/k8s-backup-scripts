@@ -78,21 +78,24 @@ backup_clickhouse() {
 #   None
 ##################################################
 main() {
+  Echo "Backing up Plausible ..."
+
   if ! backup_postgres; then
     echo "Postgres backup failed." >&2
-    do_cleanup=false
+    success=false
   fi
 
   if ! backup_clickhouse; then
     echo "ClickHouse backup failed." >&2
-    do_cleanup=false
+    success=false
   fi
 
-  if [ "${do_cleanup}" = true ]; then
-    cleanup "${PLAUSIBLE_BACKUP_DIR}"
+  if [ "${success}" = false ]; then
+    exit 1
   fi
 
-  echo "Done."
+  cleanup "${PLAUSIBLE_BACKUP_DIR}"
+  echo "Success."
 }
 
 # Entrypoint

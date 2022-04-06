@@ -53,19 +53,20 @@ main() {
 
   if ! backup_database; then
     echo "Database backup failed." >&2
-    do_cleanup=false
+    success=false
   fi
 
   if ! backup_media; then
     echo "Media backup failed." >&2
-    do_cleanup=false
+    success=false
   fi
 
-  if [ "${do_cleanup}" = true ]; then
-    cleanup "${MATRIX_BACKUP_DIR}"
+  if [ "${success}" = false ]; then
+    exit 1
   fi
 
-  echo "Done."
+  cleanup "${MATRIX_BACKUP_DIR}"
+  echo "Success."
 }
 
 # Entrypoint
