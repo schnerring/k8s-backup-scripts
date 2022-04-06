@@ -22,7 +22,7 @@ REMARK_LABEL="app=remark42"
 REMARK_NAMESPACE="remark42"
 REMARK_BACKUP_DIR="/mnt/backup-k8s/remark42"
 
-30 2 * * * /path/to/repo/backup-remark42.sh 1> /path/to/logs/backup-remark42.log 2> /path/to/logs/backup-remark42.error
+30 2 * * * /path/to/repo/backup-remark42.sh 1>/path/to/logs/backup-remark42.log 2>/path/to/logs/backup-remark42.error
 
 POSTGRES_LABEL="app=postgres"
 POSTGRES_NAMESPACE="postgres"
@@ -32,13 +32,13 @@ MATRIX_NAMESPACE="matrix"
 MATRIX_BACKUP_DIR="/mnt/backup-k8s/matrix"
 MATRIX_DB="synapse"
 
-30 2 * * * /path/to/repo/backup-matrix.sh 1> /path/to/logs/backup-matrix.log 2> /path/to/logs/backup-matrix.error
+30 2 * * * /path/to/repo/backup-matrix.sh 1>/path/to/logs/backup-matrix.log 2>/path/to/logs/backup-matrix.error
 
 PLAUSIBLE_EVENT_DATA_LABEL="app=event-data"
 PLAUSIBLE_NAMESPACE="plausible"
 PLAUSIBLE_BACKUP_DIR="/mnt/backup-k8s/plausible"
 
-30 2 * * * /path/to/repo/backup-plausible.sh 1> /path/to/logs/backup-plausible.log 2> /path/to/logs/backup-plausible.error
+30 2 * * * /path/to/repo/backup-plausible.sh 1>/path/to/logs/backup-plausible.log 2>/path/to/logs/backup-plausible.error
 ```
 
 ## Restore

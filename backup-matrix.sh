@@ -20,7 +20,7 @@ NOW=$(date +%y%m%d)
 backup_database() {
   pod=$(kubectl get pod -l "${POSTGRES_LABEL}" -n "${POSTGRES_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
   kubectl exec -i -n "${POSTGRES_NAMESPACE}" "$pod" -- \
-    pg_dump -Fc "${MATRIX_DB}" > "${MATRIX_BACKUP_DIR}/${NOW}-db.dump"
+    pg_dump -Fc "${MATRIX_DB}" >"${MATRIX_BACKUP_DIR}/${NOW}-db.dump"
 }
 
 ##################################################
@@ -36,7 +36,7 @@ backup_database() {
 backup_media() {
   pod=$(kubectl get pod -l "${MATRIX_LABEL}" -n "${MATRIX_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
   tmp="${MATRIX_BACKUP_DIR}/tmp"
-  kubectl cp "${MATRIX_NAMESPACE}/${pod}:/data/media_store" "${tmp}"
+  kubectl cp "${MATRIX_NAMESPACE}/${pod}:/data/media_store" "${tmp}" 1>/dev/null 2>&1 # see https://github.com/kubernetes/kubernetes/issues/58692
   tar -zcvf "${MATRIX_BACKUP_DIR}/${NOW}-media.tar.gz" "${tmp}"
   rm -rf "${tmp}"
 }

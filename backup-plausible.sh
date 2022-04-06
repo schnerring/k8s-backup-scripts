@@ -27,7 +27,7 @@ backup_plausible() {
       --continue \
       --no-clobber \
       --output-document=/tmp/clickhouse-backup.tar.gz \
-      "https://github.com/AlexAkulov/clickhouse-backup/releases/download/v${CLICKHOUSE_BACKUP_VERSION}/clickhouse-backup-linux-amd64.tar.gz" 2> /dev/null; then
+      "https://github.com/AlexAkulov/clickhouse-backup/releases/download/v${CLICKHOUSE_BACKUP_VERSION}/clickhouse-backup-linux-amd64.tar.gz" 2>/dev/null; then
 
     # Extract clickhouse-backup to /tmp
     kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- \
