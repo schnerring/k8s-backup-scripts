@@ -18,7 +18,7 @@ CLICKHOUSE_BACKUP_VERSION="1.3.1"
 ##################################################
 backup_postgres() {
   echo "Backing up Postgres ..."
-  pod=$(kubectl get pod -l "${POSTGRES_LABEL}" -n "${POSTGRES_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
+  pod=$(get_pod_name "${POSTGRES_LABEL}" "${POSTGRES_NAMESPACE}")
   kubectl exec -i -n "${POSTGRES_NAMESPACE}" "$pod" -- \
     pg_dump -Fc "${PLAUSIBLE_DB}" >"${PLAUSIBLE_BACKUP_DIR}/$(date +%y%m%d)-postgres-${PLAUSIBLE_DB}.dump"
 }
@@ -37,7 +37,7 @@ backup_clickhouse() {
   echo "Backing up ClickHouse ..."
 
   mkdir -p "${PLAUSIBLE_BACKUP_DIR}"
-  pod=$(kubectl get pod -l "${PLAUSIBLE_EVENT_DATA_LABEL}" -n "${PLAUSIBLE_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
+  pod=$(get_pod_name "${PLAUSIBLE_EVENT_DATA_LABEL}" "${PLAUSIBLE_NAMESPACE}")
 
   # Check if clickhouse-backup was already downloaded
   if kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- \
@@ -78,7 +78,7 @@ backup_clickhouse() {
 #   None
 ##################################################
 main() {
-  Echo "Backing up Plausible ..."
+  echo "Backing up Plausible ..."
 
   if ! backup_postgres; then
     echo "Postgres backup failed." >&2

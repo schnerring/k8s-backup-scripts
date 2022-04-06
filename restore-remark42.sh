@@ -14,7 +14,7 @@
 #   None
 ##################################################
 restore_remark42() {
-  pod=$(kubectl get pod -l "${REMARK_LABEL}" -n "${REMARK_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
+  pod=$(get_pod_name "${REMARK_LABEL}" "${REMARK_NAMESPACE}")
 
   # Get latest backup
   backup_source_path=$(find "${REMARK_BACKUP_DIR}" | sort | tail -n1)

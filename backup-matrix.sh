@@ -16,7 +16,7 @@
 ##################################################
 backup_database() {
   echo "Backing up database ..."
-  pod=$(kubectl get pod -l "${POSTGRES_LABEL}" -n "${POSTGRES_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
+  pod=$(get_pod_name "${POSTGRES_LABEL}" "${POSTGRES_NAMESPACE}")
   kubectl exec -i -n "${POSTGRES_NAMESPACE}" "$pod" -- \
     pg_dump -Fc "${MATRIX_DB}" >"${MATRIX_BACKUP_DIR}/$(date +%y%m%d)-postgres-${MATRIX_DB}.dump"
 }
@@ -32,7 +32,7 @@ backup_database() {
 ##################################################
 backup_media() {
   echo "Backing up media ..."
-  pod=$(kubectl get pod -l "${MATRIX_LABEL}" -n "${MATRIX_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
+  pod=$(get_pod_name "${MATRIX_LABEL}" "${MATRIX_NAMESPACE}")
   tmp="${MATRIX_BACKUP_DIR}/tmp"
   kubectl cp "${MATRIX_NAMESPACE}/${pod}:/data/media_store" "${tmp}"
   tar -zcvf "${MATRIX_BACKUP_DIR}/$(date +%y%m%d)-media.tar.gz" "${tmp}"
