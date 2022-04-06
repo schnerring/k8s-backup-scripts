@@ -32,7 +32,8 @@ restore_postgres() {
   db=$(printf '%s' "${backup_filename}" | awk -F'-' '{ print $3 }' | awk -F'.' '{ print $1 }')
 
   # Restore the backup
-  echo "${db}"
+  kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- \
+    pg_restore -d "${db}2" <"${backup_source_path}"
 }
 
 ##################################################
