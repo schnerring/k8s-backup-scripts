@@ -26,13 +26,11 @@ REMARK_BACKUP_DIR="/mnt/backup-k8s/remark42"
 
 POSTGRES_POD_LABEL="app=postgres"
 POSTGRES_NAMESPACE="postgres"
-POSTGRES_BACKUP_DIR="/mnt/backup-k8s/postgres"
-
-30 2 * * * /path/to/repo/backup-postgres.sh 1> /path/to/logs/backup-postgres.log 2> /path/to/logs/backup-postgres.error
 
 MATRIX_POD_LABEL="app=matrix"
 MATRIX_NAMESPACE="matrix"
 MATRIX_BACKUP_DIR="/mnt/backup-k8s/matrix"
+MATRIX_DB_NAME="synapse"
 
 30 2 * * * /path/to/repo/backup-matrix.sh 1> /path/to/logs/backup-matrix.log 2> /path/to/logs/backup-matrix.error
 
@@ -46,4 +44,22 @@ PLAUSIBLE_BACKUP_DIR="/mnt/backup-k8s/plausible"
 ## Restore
 
 - [restore-remark42.sh](./restore-remark42.sh)  
-  Upload the latest backup to the pod and restore it.
+  Upload the latest backup to the Remark42 pod and restore it.
+
+```shell
+setenv KUBECONFIG /mnt/backup-k8s/.kube/config
+
+setenv REMARK_POD_LABEL app=remark42
+setenv REMARK_NAMESPACE remark42
+setenv REMARK_BACKUP_DIR /mnt/backup-k8s/remark42
+
+./restore-remark42.sh
+
+setenv POSTGRES_POD_LABEL app=postgres
+setenv POSTGRES_NAMESPACE postgres
+
+setenv MATRIX_POD_LABEL app=matrix
+setenv MATRIX_NAMESPACE matrix
+setenv MATRIX_DB_NAME synapse
+setenv MATRIX_BACKUP_DIR /mnt/backup-k8s/matrix
+```

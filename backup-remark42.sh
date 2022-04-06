@@ -15,7 +15,6 @@
 ##################################################
 backup_remark42() {
   mkdir -p "${REMARK_BACKUP_DIR}"
-  # -o name doesn't work because "kubectl cp" doesn't support the "pod/" prefix
   pod=$(kubectl get pod -l "${REMARK_POD_LABEL}" -n "${REMARK_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
   kubectl cp "${REMARK_NAMESPACE}/${pod}:var/backup" "${REMARK_BACKUP_DIR}"
 }
