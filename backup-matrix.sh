@@ -19,7 +19,7 @@ NOW=$(date +%y%m%d)
 backup_database() {
   pod=$(kubectl get pod -l "${POSTGRES_LABEL}" -n "${POSTGRES_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
   kubectl exec -i -n "${POSTGRES_NAMESPACE}" "$pod" -- \
-    pg_dump "${MATRIX_DB}" | gzip > "${MATRIX_BACKUP_DIR}/${NOW}-${MATRIX_DB}.sql.gz"
+    pg_dump -Fc "${MATRIX_DB}" > "${MATRIX_BACKUP_DIR}/${NOW}-${MATRIX_DB}.dump"
 }
 
 ##################################################
