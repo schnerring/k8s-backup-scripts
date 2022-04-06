@@ -9,25 +9,27 @@ NOW=$(date +%y%m%d)
 ##################################################
 # Backup Matrix Synapse Postgres database.
 # Globals:
-#   POSTGRES_LABEL
-#   POSTGRES_NAMESPACE
 #   MATRIX_BACKUP_DIR
 #   MATRIX_DB
+#   NOW
+#   POSTGRES_LABEL
+#   POSTGRES_NAMESPACE
 # Arguments:
 #   None
 ##################################################
 backup_database() {
   pod=$(kubectl get pod -l "${POSTGRES_LABEL}" -n "${POSTGRES_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
   kubectl exec -i -n "${POSTGRES_NAMESPACE}" "$pod" -- \
-    pg_dump -Fc "${MATRIX_DB}" > "${MATRIX_BACKUP_DIR}/${NOW}-${MATRIX_DB}.dump"
+    pg_dump -Fc "${MATRIX_DB}" > "${MATRIX_BACKUP_DIR}/${NOW}-db.dump"
 }
 
 ##################################################
 # Backup Matrix Synapse media files.
 # Globals:
+#   MATRIX_BACKUP_DIR
 #   MATRIX_LABEL
 #   MATRIX_NAMESPACE
-#   MATRIX_BACKUP_DIR
+#   NOW
 # Arguments:
 #   None
 ##################################################
@@ -35,7 +37,7 @@ backup_media() {
   pod=$(kubectl get pod -l "${MATRIX_LABEL}" -n "${MATRIX_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
   tmp="${MATRIX_BACKUP_DIR}/tmp"
   kubectl cp "${MATRIX_NAMESPACE}/${pod}:/data/media_store" "${tmp}"
-  tar -zcvf "${MATRIX_BACKUP_DIR}/${NOW}-media_store.tar.gz" "${tmp}"
+  tar -zcvf "${MATRIX_BACKUP_DIR}/${NOW}-media.tar.gz" "${tmp}"
   rm -rf "${tmp}"
 }
 

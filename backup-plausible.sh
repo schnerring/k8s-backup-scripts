@@ -9,10 +9,10 @@ CLICKHOUSE_BACKUP_VERSION="1.3.1"
 ##################################################
 # Backup Plausible ClickHouse event database.
 # Globals:
+#   CLICKHOUSE_BACKUP_VERSION
+#   PLAUSIBLE_BACKUP_DIR
 #   PLAUSIBLE_EVENT_DATA_LABEL
 #   PLAUSIBLE_NAMESPACE
-#   PLAUSIBLE_BACKUP_DIR
-#   CLICKHOUSE_BACKUP_VERSION
 # Arguments:
 #   None
 ##################################################

@@ -7,9 +7,9 @@
 ##################################################
 # Backup all Postgres databases.
 # Globals:
+#   POSTGRES_BACKUP_DIR
 #   POSTGRES_LABEL
 #   POSTGRES_NAMESPACE
-#   POSTGRES_BACKUP_DIR
 # Arguments:
 #   None
 ##################################################

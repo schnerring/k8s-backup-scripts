@@ -7,9 +7,9 @@
 ##################################################
 # Copy automatic Remark42 backup files from pod.
 # Globals:
+#   REMARK_BACKUP_DIR
 #   REMARK_LABEL
 #   REMARK_NAMESPACE
-#   REMARK_BACKUP_DIR
 # Arguments:
 #   None
 ##################################################
