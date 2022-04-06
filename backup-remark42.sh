@@ -13,9 +13,9 @@
 # Arguments:
 #   None
 ##################################################
-backup_remark42() {
+download_backups() {
   mkdir -p "${REMARK_BACKUP_DIR}"
-  pod=$(kubectl get pod -l "${REMARK_LABEL}" -n "${REMARK_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
+  pod=$(get_pod_name "${REMARK_LABEL}" "${REMARK_NAMESPACE}")
   kubectl cp "${REMARK_NAMESPACE}/${pod}:/var/backup" "${REMARK_BACKUP_DIR}"
 }
 
@@ -27,8 +27,19 @@ backup_remark42() {
 #   None
 ##################################################
 main() {
-  backup_remark42 || exit 1
-  cleanup "${REMARK_BACKUP_DIR}" || exit 1
+  echo "Backing up Remark42 ..."
+
+  if ! download_backups; then
+    echo "Downloading backups failed." >&2
+    success=false
+  fi
+
+  if [ "${success}" = false ]; then
+    exit 1
+  fi
+
+  cleanup "${REMARK_BACKUP_DIR}"
+  echo "Success."
 }
 
 # Entrypoint
