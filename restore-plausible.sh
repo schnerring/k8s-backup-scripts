@@ -19,7 +19,7 @@ restore_postgres() {
   pod=$(get_pod_name "${PLAUSIBLE_LABEL}" "${PLAUSIBLE_NAMESPACE}")
 
   # Get latest Postgres dump
-  backup_source_path=$(find "${PLAUSIBLE_BACKUP_DIR}" '*.dump' | sort | tail -n1)
+  backup_source_path=$(find "${PLAUSIBLE_BACKUP_DIR}" -name '*.dump' | sort | tail -n1)
 
   # Confirmation prompt
   confirm "${backup_source_path}"
@@ -48,7 +48,7 @@ restore_clickhouse() {
   echo "Restoring ClickHouse ..."
 
   # Get latest ClickHouse backup
-  backup_source_path=$(find "${PLAUSIBLE_BACKUP_DIR}" '*clickhouse.tar.gz' | sort | tail -n1)
+  backup_source_path=$(find "${PLAUSIBLE_BACKUP_DIR}" -name '*clickhouse.tar.gz' | sort | tail -n1)
 
   # Confirmation prompt
   confirm "${backup_source_path}"
