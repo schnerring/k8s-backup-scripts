@@ -41,12 +41,12 @@ restore_remark42() {
 ##################################################
 # Main function of script.
 # Globals:
-#   REMARK_BACKUP_DIR
+#   None
 # Arguments:
 #   None
 ##################################################
 main() {
-  restore_remark42 || exit 1
+  restore_remark42
 }
 
 # Entrypoint

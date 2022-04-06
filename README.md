@@ -44,6 +44,10 @@ PLAUSIBLE_NAMESPACE=plausible
 
 - [restore-remark42.sh](./restore-remark42.sh)  
   Upload the latest backup to the Remark42 pod and restore it.
+- [restore-matrix.sh](./restore-matrix.sh)  
+  Restore the latest Postgres database and media repository backups of Matrix Synapse.
+- [restore-plausible.sh](./restore-matrix.sh)  
+  Restore the latest Plausible Postgres database and ClickHouse database backups.
 
 ```shell
 setenv KUBECONFIG /mnt/backup-k8s/.kube/config
@@ -62,8 +66,12 @@ setenv MATRIX_DB synapse
 setenv MATRIX_LABEL app=matrix
 setenv MATRIX_NAMESPACE matrix
 
+./restore-matrix.sh
+
 setenv PLAUSIBLE_BACKUP_DIR /mnt/backup-k8s/plausible
 setenv PLAUSIBLE_DB plausible
 setenv PLAUSIBLE_EVENT_DATA_LABEL app=event-data
 setenv PLAUSIBLE_NAMESPACE plausible
+
+./restore-plausible.sh
 ```
