@@ -16,7 +16,7 @@
 download_backups() {
   mkdir -p "${REMARK_BACKUP_DIR}"
   pod=$(get_pod_name "${REMARK_LABEL}" "${REMARK_NAMESPACE}")
-  kubectl cp "${REMARK_NAMESPACE}/${pod}:/var/backup" "${REMARK_BACKUP_DIR}"
+  kubectl cp "${REMARK_NAMESPACE}/${pod}:var/backup" "${REMARK_BACKUP_DIR}"
 }
 
 ##################################################

@@ -24,7 +24,7 @@ restore_remark42() {
 
   # Copy backup to pod
   backup_filename=$(basename "${backup_source_path}")
-  backup_destination_path=/var/backup/${backup_filename}
+  backup_destination_path=var/backup/${backup_filename}
   kubectl cp "${backup_source_path}" "${REMARK_NAMESPACE}/${pod}:${backup_destination_path}"
 
   # Extract site from filename
