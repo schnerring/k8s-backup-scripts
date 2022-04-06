@@ -36,7 +36,7 @@ backup_database() {
 backup_media() {
   pod=$(kubectl get pod -l "${MATRIX_LABEL}" -n "${MATRIX_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
   tmp="${MATRIX_BACKUP_DIR}/tmp"
-  kubectl cp "${MATRIX_NAMESPACE}/${pod}:/data/media_store" "${tmp}" 1>/dev/null 2>&1 # see https://github.com/kubernetes/kubernetes/issues/58692
+  kubectl cp "${MATRIX_NAMESPACE}/${pod}:/data/media_store" "${tmp}" >/dev/null 2>&1 # see https://github.com/kubernetes/kubernetes/issues/58692
   tar -zcvf "${MATRIX_BACKUP_DIR}/${NOW}-media.tar.gz" "${tmp}"
   rm -rf "${tmp}"
 }
@@ -49,15 +49,19 @@ backup_media() {
 #   None
 ##################################################
 main() {
+  printf 'Backing up Matrix Synapse: %s' "${NOW}"
+
   mkdir -p "${MATRIX_BACKUP_DIR}"
 
+  printf 'Backing up database ...'
   if ! backup_database; then
-    printf "Synapse database backup failed" 1>&2
+    printf 'Database backup failed.' >&2
     do_cleanup=false
   fi
 
+  printf 'Backing up media ...'
   if ! backup_media; then
-    printf "Synapse media backup failed" 1>&2
+    printf 'Media backup failed.' >&2
     do_cleanup=false
   fi
 

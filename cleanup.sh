@@ -11,5 +11,6 @@ BACKUP_FILE_MAX_AGE_DAYS=30
 #   Directory to clean
 ##################################################
 cleanup() {
+  printf 'Cleaning up old backups ...'
   find "$1" -mtime "+${BACKUP_FILE_MAX_AGE_DAYS}" -type f -delete
 }
