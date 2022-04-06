@@ -32,8 +32,11 @@ restore_remark42() {
   # E.g., `schnerring.net` from `backup-schnerring.net-20220403.gz`
   site=$(printf '%s' "${backup_filename}" | awk -F'-' '{ print $2 }')
 
+  # TODO create user backup before restore
+
   # Restore the backup
-  kubectl exec -it "${pod}" -n "${REMARK_NAMESPACE}" -- remark42 restore --site "${site}" --file "${backup_destination_path}"
+  kubectl exec -i "${pod}" -n "${REMARK_NAMESPACE}" -- \
+    remark42 restore --site "${site}" --file "${backup_destination_path}"
 }
 
 ##################################################
