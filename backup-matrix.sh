@@ -18,6 +18,7 @@ NOW=$(date +%y%m%d)
 #   None
 ##################################################
 backup_database() {
+  echo "Backing up database ..."
   pod=$(kubectl get pod -l "${POSTGRES_LABEL}" -n "${POSTGRES_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
   kubectl exec -i -n "${POSTGRES_NAMESPACE}" "$pod" -- \
     pg_dump -Fc "${MATRIX_DB}" >"${MATRIX_BACKUP_DIR}/${NOW}-db.dump"
@@ -34,9 +35,10 @@ backup_database() {
 #   None
 ##################################################
 backup_media() {
+  echo "Backing up media ..."
   pod=$(kubectl get pod -l "${MATRIX_LABEL}" -n "${MATRIX_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
   tmp="${MATRIX_BACKUP_DIR}/tmp"
-  kubectl cp "${MATRIX_NAMESPACE}/${pod}:/data/media_store" "${tmp}" >/dev/null 2>&1 # see https://github.com/kubernetes/kubernetes/issues/58692
+  kubectl cp "${MATRIX_NAMESPACE}/${pod}:/data/media_store" "${tmp}"
   tar -zcvf "${MATRIX_BACKUP_DIR}/${NOW}-media.tar.gz" "${tmp}"
   rm -rf "${tmp}"
 }
@@ -49,25 +51,25 @@ backup_media() {
 #   None
 ##################################################
 main() {
-  printf 'Backing up Matrix Synapse: %s' "${NOW}"
+  echo "Backing up Matrix Synapse: ${NOW} ..."
 
   mkdir -p "${MATRIX_BACKUP_DIR}"
 
-  printf 'Backing up database ...'
   if ! backup_database; then
-    printf 'Database backup failed.' >&2
+    echo "Database backup failed." >&2
     do_cleanup=false
   fi
 
-  printf 'Backing up media ...'
   if ! backup_media; then
-    printf 'Media backup failed.' >&2
+    echo "Media backup failed." >&2
     do_cleanup=false
   fi
 
   if [ "${do_cleanup}" = true ]; then
     cleanup "${MATRIX_BACKUP_DIR}"
   fi
+
+  echo "Done."
 }
 
 # Entrypoint
