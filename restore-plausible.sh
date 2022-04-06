@@ -53,6 +53,8 @@ restore_clickhouse() {
   # Confirmation prompt
   confirm "${backup_source_path}"
 
+  install_clickhouse_backup
+
   backup_filename=$(basename "${backup_source_path}")
 
   echo "${backup_filename}"

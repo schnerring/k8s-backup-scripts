@@ -4,8 +4,6 @@
 # See https://stackoverflow.com/questions/29832037/how-to-get-script-directory-in-posix-sh
 . "$(dirname "$0")/common.sh"
 
-CLICKHOUSE_BACKUP_VERSION="1.3.1"
-
 ##################################################
 # Backup Plausible Postgres database.
 # Globals:
@@ -26,7 +24,6 @@ backup_postgres() {
 ##################################################
 # Backup Plausible ClickHouse event database.
 # Globals:
-#   CLICKHOUSE_BACKUP_VERSION
 #   PLAUSIBLE_BACKUP_DIR
 #   PLAUSIBLE_EVENT_DATA_LABEL
 #   PLAUSIBLE_NAMESPACE
@@ -39,25 +36,13 @@ backup_clickhouse() {
   mkdir -p "${PLAUSIBLE_BACKUP_DIR}"
   pod=$(get_pod_name "${PLAUSIBLE_EVENT_DATA_LABEL}" "${PLAUSIBLE_NAMESPACE}")
 
-  # Check if clickhouse-backup was already downloaded
-  if kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- \
-    wget \
-      --quiet \
-      --continue \
-      --no-clobber \
-      --output-document=/tmp/clickhouse-backup.tar.gz \
-      "https://github.com/AlexAkulov/clickhouse-backup/releases/download/v${CLICKHOUSE_BACKUP_VERSION}/clickhouse-backup-linux-amd64.tar.gz" 2>/dev/null; then
-
-    # Extract clickhouse-backup to /tmp
-    kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- \
-      tar -zxvf /tmp/clickhouse-backup.tar.gz --directory=/tmp --strip-components=3
-  fi
+  install_clickhouse_backup
 
   backup_name=$(date +%y%m%d)-clickhouse
 
   # Create backup in pod
   kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- \
-    /tmp/clickhouse-backup create "${backup_name}"
+    clickhouse-backup create "${backup_name}"
 
   # Download backup from pod
   tmp="${PLAUSIBLE_BACKUP_DIR}/tmp"
@@ -67,7 +52,7 @@ backup_clickhouse() {
 
   # Delete backup in pod
   kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- \
-    /tmp/clickhouse-backup delete local "${backup_name}"
+    clickhouse-backup delete local "${backup_name}"
 }
 
 ##################################################
