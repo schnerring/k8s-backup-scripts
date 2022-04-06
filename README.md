@@ -14,28 +14,28 @@ Scripts that I use for TrueNAS jail cron jobs to backup my Azure Kubernetes Serv
 Add the following with `crontab -e` to run the backup scripts daily at 02:30 AM:
 
 ```shell
-KUBECONFIG=/path/to/kubeconfig
+KUBECONFIG=/mnt/backup-k8s/.kube/config
 
-REMARK_BACKUP_DIR="/mnt/backup-k8s/remark42"
-REMARK_LABEL="app=remark42"
-REMARK_NAMESPACE="remark42"
+REMARK_BACKUP_DIR=/mnt/backup-k8s/remark42
+REMARK_LABEL=app=remark42
+REMARK_NAMESPACE=remark42
 
 30 2 * * * /mnt/backup-k8s/scripts/backup-remark42.sh >/mnt/backup-k8s/log/remark42.txt 2>&1
 
-POSTGRES_LABEL="app=postgres"
-POSTGRES_NAMESPACE="postgres"
+POSTGRES_LABEL=app=postgres
+POSTGRES_NAMESPACE=postgres
 
-MATRIX_BACKUP_DIR="/mnt/backup-k8s/matrix"
-MATRIX_DB="synapse"
-MATRIX_LABEL="app=matrix"
-MATRIX_NAMESPACE="matrix"
+MATRIX_BACKUP_DIR=/mnt/backup-k8s/matrix
+MATRIX_DB=synapse
+MATRIX_LABEL=app=matrix
+MATRIX_NAMESPACE=matrix
 
 30 2 * * * /mnt/backup-k8s/scripts/backup-matrix.sh >/mnt/backup-k8s/log/matrix.txt 2>&1
 
-PLAUSIBLE_BACKUP_DIR="/mnt/backup-k8s/plausible"
-PLAUSIBLE_DB="plausible"
-PLAUSIBLE_EVENT_DATA_LABEL="app=event-data"
-PLAUSIBLE_NAMESPACE="plausible"
+PLAUSIBLE_BACKUP_DIR=/mnt/backup-k8s/plausible
+PLAUSIBLE_DB=plausible
+PLAUSIBLE_EVENT_DATA_LABEL=app=event-data
+PLAUSIBLE_NAMESPACE=plausible
 
 30 2 * * * /mnt/backup-k8s/scripts/backup-plausible.sh >/mnt/backup-k8s/log/plausible.txt 2>&1
 ```
