@@ -9,7 +9,7 @@ CLICKHOUSE_BACKUP_VERSION="1.3.1"
 ##################################################
 # Backup Plausible ClickHouse event database.
 # Globals:
-#   PLAUSIBLE_EVENT_DATA_POD_LABEL
+#   PLAUSIBLE_EVENT_DATA_LABEL
 #   PLAUSIBLE_NAMESPACE
 #   PLAUSIBLE_BACKUP_DIR
 #   CLICKHOUSE_BACKUP_VERSION
@@ -18,7 +18,7 @@ CLICKHOUSE_BACKUP_VERSION="1.3.1"
 ##################################################
 backup_plausible() {
   mkdir -p "${PLAUSIBLE_BACKUP_DIR}"
-  pod=$(kubectl get pod -l "${PLAUSIBLE_EVENT_DATA_POD_LABEL}" -n "${PLAUSIBLE_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
+  pod=$(kubectl get pod -l "${PLAUSIBLE_EVENT_DATA_LABEL}" -n "${PLAUSIBLE_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
 
   # Check if clickhouse-backup was already downloaded
   if kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- \

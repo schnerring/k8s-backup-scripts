@@ -7,7 +7,7 @@
 ##################################################
 # Backup all Postgres databases.
 # Globals:
-#   POSTGRES_POD_LABEL
+#   POSTGRES_LABEL
 #   POSTGRES_NAMESPACE
 #   POSTGRES_BACKUP_DIR
 # Arguments:
@@ -15,7 +15,7 @@
 ##################################################
 backup_postgres() {
   mkdir -p "${POSTGRES_BACKUP_DIR}"
-  pod=$(kubectl get pod -l "${POSTGRES_POD_LABEL}" -n "${POSTGRES_NAMESPACE}" -o name)
+  pod=$(kubectl get pod -l "${POSTGRES_LABEL}" -n "${POSTGRES_NAMESPACE}" -o name)
   kubectl exec -i -n "${POSTGRES_NAMESPACE}" "$pod" -- \
     pg_dumpall | gzip > "${POSTGRES_BACKUP_DIR}/pg_dumpall_$(date +%y%m%d).sql.gz"
 }

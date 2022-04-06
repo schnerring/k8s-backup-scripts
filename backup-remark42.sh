@@ -7,7 +7,7 @@
 ##################################################
 # Copy automatic Remark42 backup files from pod.
 # Globals:
-#   REMARK_POD_LABEL
+#   REMARK_LABEL
 #   REMARK_NAMESPACE
 #   REMARK_BACKUP_DIR
 # Arguments:
@@ -15,7 +15,7 @@
 ##################################################
 backup_remark42() {
   mkdir -p "${REMARK_BACKUP_DIR}"
-  pod=$(kubectl get pod -l "${REMARK_POD_LABEL}" -n "${REMARK_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
+  pod=$(kubectl get pod -l "${REMARK_LABEL}" -n "${REMARK_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
   kubectl cp "${REMARK_NAMESPACE}/${pod}:var/backup" "${REMARK_BACKUP_DIR}"
 }
 

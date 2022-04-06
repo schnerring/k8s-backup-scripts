@@ -18,23 +18,23 @@ Add the following with `crontab -e` to run the backup scripts daily at 02:30 AM:
 ```shell
 KUBECONFIG=/path/to/kubeconfig
 
-REMARK_POD_LABEL="app=remark42"
+REMARK_LABEL="app=remark42"
 REMARK_NAMESPACE="remark42"
 REMARK_BACKUP_DIR="/mnt/backup-k8s/remark42"
 
 30 2 * * * /path/to/repo/backup-remark42.sh 1> /path/to/logs/backup-remark42.log 2> /path/to/logs/backup-remark42.error
 
-POSTGRES_POD_LABEL="app=postgres"
+POSTGRES_LABEL="app=postgres"
 POSTGRES_NAMESPACE="postgres"
 
-MATRIX_POD_LABEL="app=matrix"
+MATRIX_LABEL="app=matrix"
 MATRIX_NAMESPACE="matrix"
 MATRIX_BACKUP_DIR="/mnt/backup-k8s/matrix"
 MATRIX_DB_NAME="synapse"
 
 30 2 * * * /path/to/repo/backup-matrix.sh 1> /path/to/logs/backup-matrix.log 2> /path/to/logs/backup-matrix.error
 
-PLAUSIBLE_EVENT_DATA_POD_LABEL="app=event-data"
+PLAUSIBLE_EVENT_DATA_LABEL="app=event-data"
 PLAUSIBLE_NAMESPACE="plausible"
 PLAUSIBLE_BACKUP_DIR="/mnt/backup-k8s/plausible"
 
@@ -49,16 +49,16 @@ PLAUSIBLE_BACKUP_DIR="/mnt/backup-k8s/plausible"
 ```shell
 setenv KUBECONFIG /mnt/backup-k8s/.kube/config
 
-setenv REMARK_POD_LABEL app=remark42
+setenv REMARK_LABEL app=remark42
 setenv REMARK_NAMESPACE remark42
 setenv REMARK_BACKUP_DIR /mnt/backup-k8s/remark42
 
 ./restore-remark42.sh
 
-setenv POSTGRES_POD_LABEL app=postgres
+setenv POSTGRES_LABEL app=postgres
 setenv POSTGRES_NAMESPACE postgres
 
-setenv MATRIX_POD_LABEL app=matrix
+setenv MATRIX_LABEL app=matrix
 setenv MATRIX_NAMESPACE matrix
 setenv MATRIX_DB_NAME synapse
 setenv MATRIX_BACKUP_DIR /mnt/backup-k8s/matrix

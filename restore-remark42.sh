@@ -7,14 +7,14 @@
 ##################################################
 # Copy backup to Remark42 pod and restore it.
 # Globals:
-#   REMARK_POD_LABEL
+#   REMARK_LABEL
 #   REMARK_NAMESPACE
 #   REMARK_BACKUP_DIR
 # Arguments:
 #   None
 ##################################################
 restore_remark42() {
-  pod=$(kubectl get pod -l "${REMARK_POD_LABEL}" -n "${REMARK_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
+  pod=$(kubectl get pod -l "${REMARK_LABEL}" -n "${REMARK_NAMESPACE}" -o jsonpath="{.items[0].metadata.name}")
 
   # Get latest backup
   backup_source_path=$(find "${REMARK_BACKUP_DIR}" | sort | tail -n1)
