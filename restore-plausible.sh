@@ -62,10 +62,8 @@ restore_clickhouse() {
   kubectl cp "${tmp}" "${pod_path}"
 
   echo "Restoring backup ${backup_name} ..."
-  #kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- \
-  #  clickhouse-backup restore "${backup_name}"
   kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- \
-    clickhouse-backup list
+    clickhouse-backup restore "${backup_name}"
 
   echo "Cleaning up ..."
   rm -rf "${tmp}"
@@ -81,7 +79,7 @@ restore_clickhouse() {
 #   None
 ##################################################
 main() {
-  #restore_postgres
+  restore_postgres
   restore_clickhouse
   echo "Success."
 }
