@@ -47,6 +47,7 @@ restore_remark42() {
 ##################################################
 main() {
   restore_remark42
+  echo "Success."
 }
 
 # Entrypoint
