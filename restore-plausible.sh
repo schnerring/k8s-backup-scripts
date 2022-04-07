@@ -50,9 +50,26 @@ restore_clickhouse() {
 
   install_clickhouse_backup
 
-  backup_filename=$(basename "${backup_source_path}")
+  tmp="${PLAUSIBLE_BACKUP_DIR}/tmp"
+  echo "Extracting ${backup_source_path} to ${tmp} ..."
+  tar -xf "${backup_source_path}" -C "${tmp}"
 
-  echo "${backup_filename}"
+  pod=$(get_pod_name "${PLAUSIBLE_EVENT_DATA_LABEL}" "${PLAUSIBLE_NAMESPACE}")
+  backup_name=$(basename "${backup_source_path}" .tar.gz)
+  pod_path="${PLAUSIBLE_NAMESPACE}/${pod}:/var/lib/clickhouse/backup/${backup_name}"
+  echo "Copying ${tmp} to ${pod_path} ..."
+  kubectl cp "${tmp}" "${pod_path}"
+
+  echo "Restoring backup ${backup_name} ..."
+  #kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- \
+  #  clickhouse-backup restore "${backup_name}"
+  kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- \
+    clickhouse-backup list
+
+  echo "Cleaning up ..."
+  rm -rf "${tmp}"
+  kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- \
+    clickhouse-backup delete local "${backup_name}"
 }
 
 ##################################################
@@ -63,8 +80,9 @@ restore_clickhouse() {
 #   None
 ##################################################
 main() {
-  restore_postgres
+  #restore_postgres
   restore_clickhouse
+  echo "Success."
 }
 
 # Entrypoint

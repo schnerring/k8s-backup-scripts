@@ -34,23 +34,26 @@ backup_clickhouse() {
   echo "Backing up ClickHouse ..."
 
   mkdir -p "${PLAUSIBLE_BACKUP_DIR}"
-  pod=$(get_pod_name "${PLAUSIBLE_EVENT_DATA_LABEL}" "${PLAUSIBLE_NAMESPACE}")
 
   install_clickhouse_backup
 
   backup_name=$(date +%y%m%d)-clickhouse
-
-  # Create backup in pod
+  echo "Creating backup ${backup_name} ..."
+  pod=$(get_pod_name "${PLAUSIBLE_EVENT_DATA_LABEL}" "${PLAUSIBLE_NAMESPACE}")
   kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- \
     clickhouse-backup create "${backup_name}"
 
-  # Download backup from pod
   tmp="${PLAUSIBLE_BACKUP_DIR}/tmp"
-  kubectl cp "${PLAUSIBLE_NAMESPACE}/${pod}:/var/lib/clickhouse/backup/${backup_name}" "${tmp}"
-  tar -zcvf "${PLAUSIBLE_BACKUP_DIR}/${backup_name}.tar.gz" "${tmp}"
-  rm -rf "${tmp}"
+  pod_path="${PLAUSIBLE_NAMESPACE}/${pod}:/var/lib/clickhouse/backup/${backup_name}"
+  echo "Copying ${pod_path} to ${tmp} ..."
+  kubectl cp "${pod_path}" "${tmp}"
 
-  # Delete backup in pod
+  backup_destination_path="${PLAUSIBLE_BACKUP_DIR}/${backup_name}.tar.gz"
+  echo "Compressing ${backup_destination_path} to ${tmp} ..."
+  tar -zcvf "${backup_destination_path}" "${tmp}"
+
+  echo "Cleaning up ..."
+  rm -rf "${tmp}"
   kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- \
     clickhouse-backup delete local "${backup_name}"
 }
