@@ -35,7 +35,7 @@ backup_media() {
   pod=$(get_pod_name "${MATRIX_LABEL}" "${MATRIX_NAMESPACE}")
   tmp="${MATRIX_BACKUP_DIR}/tmp"
   kubectl cp "${MATRIX_NAMESPACE}/${pod}:/data/media_store" "${tmp}"
-  tar -zcf "${MATRIX_BACKUP_DIR}/$(date +%y%m%d)-media.tar.gz" "${tmp}"
+  tar -zcf "${MATRIX_BACKUP_DIR}/$(date +%y%m%d)-media.tar.gz" -C "${tmp}" .
   rm -rf "${tmp}"
 }
 
