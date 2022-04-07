@@ -51,6 +51,7 @@ restore_clickhouse() {
   install_clickhouse_backup
 
   tmp="${PLAUSIBLE_BACKUP_DIR}/tmp"
+  mkdir -p "${tmp}"
   echo "Extracting ${backup_source_path} to ${tmp} ..."
   tar -xf "${backup_source_path}" -C "${tmp}"
 
