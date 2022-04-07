@@ -50,7 +50,7 @@ backup_clickhouse() {
 
   backup_destination_path="${PLAUSIBLE_BACKUP_DIR}/${backup_name}.tar.gz"
   echo "Compressing ${backup_destination_path} to ${tmp} ..."
-  tar -zcvf "${backup_destination_path}" "${tmp}"
+  tar -zcf "${backup_destination_path}" "${tmp}"
 
   echo "Cleaning up ..."
   rm -rf "${tmp}"

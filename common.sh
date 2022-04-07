@@ -69,6 +69,6 @@ install_clickhouse_backup() {
     echo "Installing clickhouse-backup v${CLICKHOUSE_BACKUP_VERSION} ..."
     # Extract clickhouse-backup to /usr/local/bin
     kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- \
-      tar -zxvf /tmp/clickhouse-backup.tar.gz --directory=/usr/local/bin --strip-components=3
+      tar -xf /tmp/clickhouse-backup.tar.gz --directory=/usr/local/bin --strip-components=3
   fi
 }
