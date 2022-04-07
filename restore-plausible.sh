@@ -20,7 +20,7 @@ restore_postgres() {
   pod=$(get_pod_name "${POSTGRES_LABEL}" "${POSTGRES_NAMESPACE}")
 
   # Get latest Postgres dump
-  backup_source_path=$(find "${PLAUSIBLE_BACKUP_DIR}" -name "*-postgres-${PLAUSIBLE_DB}.dump" | sort | tail -n1)
+  backup_source_path=$(find "${PLAUSIBLE_BACKUP_DIR}" -name "*.dump" | sort | tail -n1)
 
   # Confirmation prompt
   confirm "${backup_source_path}"
