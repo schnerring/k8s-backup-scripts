@@ -48,13 +48,13 @@ restore_media() {
   # Confirmation prompt
   confirm "${backup_source_path}"
 
-  tmp="${MATRIX_BACKUP_DIR}/tmp"
+  tmp="${MATRIX_BACKUP_DIR}/media_store"
   mkdir -p "${tmp}"
   echo "Extracting ${backup_source_path} to ${tmp} ..."
   tar -xf "${backup_source_path}" -C "${tmp}"
 
   pod=$(get_pod_name "${MATRIX_LABEL}" "${MATRIX_NAMESPACE}")
-  pod_path="${MATRIX_NAMESPACE}/${pod}:/data/media_store"
+  pod_path="${MATRIX_NAMESPACE}/${pod}:/data"
   echo "Copying ${tmp} to ${pod_path} ..."
   kubectl cp "${tmp}" "${pod_path}"
 
