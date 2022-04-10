@@ -54,18 +54,9 @@ restore_media() {
   tar -xf "${backup_source_path}" -C "${tmp}"
 
   pod=$(get_pod_name "${MATRIX_LABEL}" "${MATRIX_NAMESPACE}")
-  echo "Uploading media ..."
-  kubectl cp "${tmp}" "${MATRIX_NAMESPACE}/${pod}:/data/media_store_new"
-
-  echo "Restoring backup ..."
-  #kubectl exec -i -n "${MATRIX_NAMESPACE}" "$pod" -- \
-  #  rm -rf "/data/media_store"
-  #kubectl exec -i -n "${MATRIX_NAMESPACE}" "$pod" -- \
-  #  mv "/data/media_store_new" "/data/media_store"
-  kubectl exec -i -n "${MATRIX_NAMESPACE}" "$pod" -- \
-    ls -alh "/data/media_store"
-  kubectl exec -i -n "${MATRIX_NAMESPACE}" "$pod" -- \
-    ls -alh "/data/media_store_new"
+  pod_path="${MATRIX_NAMESPACE}/${pod}:/data/media_store"
+  echo "Copying ${tmp} to ${pod_path} ..."
+  kubectl cp "${tmp}" "${pod_path}"
 
   echo "Cleaning up ..."
   rm -rf "${tmp}"
