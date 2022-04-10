@@ -25,7 +25,7 @@ restore_postgres() {
   # Confirmation prompt
   confirm "${backup_source_path}"
 
-  # Restore the backup
+  echo "Restoring database: ${PLAUSIBLE_DB} ..."
   kubectl exec -i -n "${POSTGRES_NAMESPACE}" "$pod" -- \
     pg_restore --clean --dbname="${PLAUSIBLE_DB}" <"${backup_source_path}"
 }

@@ -14,7 +14,7 @@
 # Arguments:
 #   None
 ##################################################
-backup_database() {
+backup_postgres() {
   echo "Backing up database ..."
   pod=$(get_pod_name "${POSTGRES_LABEL}" "${POSTGRES_NAMESPACE}")
   kubectl exec -i -n "${POSTGRES_NAMESPACE}" "$pod" -- \
@@ -51,7 +51,7 @@ main() {
 
   mkdir -p "${MATRIX_BACKUP_DIR}"
 
-  if ! backup_database; then
+  if ! backup_postgres; then
     echo "Database backup failed." >&2
     success=false
   fi
