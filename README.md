@@ -25,12 +25,12 @@ REMARK_NAMESPACE=remark42
 POSTGRES_LABEL=app=postgres
 POSTGRES_NAMESPACE=postgres
 
-MATRIX_BACKUP_DIR=/mnt/backup-k8s/matrix
-MATRIX_DB=synapse
-MATRIX_LABEL=app=matrix
 MATRIX_NAMESPACE=matrix
+MATRIX_SYNAPSE_BACKUP_DIR=/mnt/backup-k8s/matrix-synapse
+MATRIX_SYNAPSE_DB=matrix-synapse
+MATRIX_SYNAPSE_LABEL=app=matrix-synapse
 
-30 2 * * * /mnt/backup-k8s/scripts/backup-matrix.sh >/mnt/backup-k8s/log/matrix.txt 2>&1
+30 2 * * * /mnt/backup-k8s/scripts/backup-matrix-synapse.sh >/mnt/backup-k8s/log/matrix-synapse.txt 2>&1
 
 PLAUSIBLE_BACKUP_DIR=/mnt/backup-k8s/plausible
 PLAUSIBLE_DB=plausible
@@ -61,12 +61,12 @@ setenv REMARK_NAMESPACE remark42
 setenv POSTGRES_LABEL app=postgres
 setenv POSTGRES_NAMESPACE postgres
 
-setenv MATRIX_BACKUP_DIR /mnt/backup-k8s/matrix
-setenv MATRIX_DB synapse
-setenv MATRIX_LABEL app=matrix
 setenv MATRIX_NAMESPACE matrix
+setenv MATRIX_SYNAPSE_BACKUP_DIR /mnt/backup-k8s/matrix-synapse
+setenv MATRIX_SYNAPSE_DB matrix-synapse
+setenv MATRIX_SYNAPSE_LABEL app=matrix-synapse
 
-./restore-matrix.sh
+./restore-matrix-synapse.sh
 
 setenv PLAUSIBLE_BACKUP_DIR /mnt/backup-k8s/plausible
 setenv PLAUSIBLE_DB plausible
