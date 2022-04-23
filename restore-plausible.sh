@@ -57,8 +57,11 @@ restore_clickhouse() {
 
   pod=$(get_pod_name "${PLAUSIBLE_EVENT_DATA_LABEL}" "${PLAUSIBLE_NAMESPACE}")
   backup_name=$(basename "${backup_source_path}" .tar.gz)
-  pod_path="${PLAUSIBLE_NAMESPACE}/${pod}:/var/lib/clickhouse/backup/${backup_name}"
+  backup_destination_path=/var/lib/clickhouse/backup/${backup_name}
+  pod_path="${PLAUSIBLE_NAMESPACE}/${pod}:${backup_destination_path}"
   echo "Copying ${tmp} to ${pod_path} ..."
+  kubectl exec -i -n "${PLAUSIBLE_NAMESPACE}" "$pod" -- \
+    mkdir -p "${backup_destination_path}"
   kubectl cp "${tmp}" "${pod_path}"
 
   echo "Restoring backup ${backup_name} ..."
