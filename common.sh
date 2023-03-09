@@ -1,19 +1,19 @@
 #!/bin/sh
 
-BACKUP_FILE_MAX_AGE_DAYS=30
 CLICKHOUSE_BACKUP_VERSION=1.3.1
 
 ##################################################
-# Cleanup files older than BACKUP_FILE_MAX_AGE_DAYS days.
+# Cleanup files but the most recent amount specified.
 # from BACKUP_DIR
 # Globals:
-#   BACKUP_FILE_MAX_AGE_DAYS
+#   None
 # Arguments:
 #   Directory to clean
+#   Number most recent files to keep
 ##################################################
 cleanup() {
-  echo "Cleaning up backups older than ${BACKUP_FILE_MAX_AGE_DAYS} days in $1 ..."
-  find "$1" -mtime "+${BACKUP_FILE_MAX_AGE_DAYS}" -type f -delete
+  echo "Cleaning up backups in $1 except most recent $2 files ..."
+  $(cd "$1" && ls -tp | grep -v '/$' | tail -n +$2 | xargs -I {} rm -- {})
 }
 
 ########################################
