@@ -13,7 +13,7 @@ CLICKHOUSE_BACKUP_VERSION=1.3.1
 ##################################################
 cleanup() {
   echo "Cleaning up backups in $1 except most recent $2 files ..."
-  $(cd "$1" && ls -tp | grep -v '/$' | tail -n +$2 | xargs -I {} rm -- {})
+  $(cd "$1" && ls -tp | grep -v '/$' | tail -n +$(($2+1)) | xargs -I {} rm -- {})
 }
 
 ########################################
