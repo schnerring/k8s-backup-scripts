@@ -2,6 +2,13 @@
 
 Scripts that I use for TrueNAS jail cron jobs to backup my Azure Kubernetes Service data.
 
+## Requirements
+
+For Ubuntu Server 22.04.2 LTS the following packages are additionally required:
+
+- `kubectl`, see [Install and Set Up kubectl on Linux](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
+- NFS Client: `sudo apt install nfs-common`
+
 ## Backup
 
 - [backup-remark42.sh](./backup-remark42.sh)  
@@ -39,6 +46,8 @@ PLAUSIBLE_NAMESPACE=plausible
 
 30 2 * * * /mnt/backup-k8s/scripts/backup-plausible.sh >/mnt/backup-k8s/log/plausible.txt 2>&1
 ```
+
+Set environment variables in `/etc/environment` alternatively.
 
 ## Restore
 
