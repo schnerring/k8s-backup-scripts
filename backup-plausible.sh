@@ -82,7 +82,7 @@ main() {
     exit 1
   fi
 
-  cleanup "${PLAUSIBLE_BACKUP_DIR}"
+  cleanup "${PLAUSIBLE_BACKUP_DIR}" 60
   echo "Success."
 }
 

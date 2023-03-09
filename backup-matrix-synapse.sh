@@ -65,7 +65,7 @@ main() {
     exit 1
   fi
 
-  cleanup "${MATRIX_SYNAPSE_BACKUP_DIR}"
+  cleanup "${MATRIX_SYNAPSE_BACKUP_DIR}" 60
   echo "Success."
 }
 
