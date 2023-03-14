@@ -5,19 +5,21 @@
 . "$(dirname "$0")/common.sh"
 
 ##################################################
-# Copy backup to Remark42 pod and restore it.
+# Copy latest backup file to Remark42 pod and restore it.
 # Globals:
+#   REMARK_BACKUP_DIR
 #   REMARK_LABEL
 #   REMARK_NAMESPACE
-#   REMARK_BACKUP_DIR
 # Arguments:
 #   None
 ##################################################
-restore_remark42() {
+restore_backup() {
+  echo "Restoring Remark42 backup ..."
+
   pod=$(get_pod_name "${REMARK_LABEL}" "${REMARK_NAMESPACE}")
 
   # Get latest backup
-  backup_source_path=$(find "${REMARK_BACKUP_DIR}" | sort | tail -n1)
+  backup_source_path=$(find "${REMARK_BACKUP_DIR}" -name 'backup*.gz' | sort | tail -n1)
 
   # Confirmation prompt
   confirm "${backup_source_path}"
@@ -31,11 +33,75 @@ restore_remark42() {
   # E.g., `schnerring.net` from `backup-schnerring.net-20220403.gz`
   site=$(printf '%s' "${backup_filename}" | awk -F'-' '{ print $2 }')
 
-  # TODO create user backup before restore
+  # TODO maybe create user backup before restore
 
   # Restore the backup
   kubectl exec -i "${pod}" -n "${REMARK_NAMESPACE}" -- \
     remark42 restore --site "${site}" --file "${backup_destination_path}"
+}
+
+##################################################
+# Restore Remark42 avatar files.
+# Globals:
+#   REMARK_BACKUP_DIR
+#   REMARK_LABEL
+#   REMARK_NAMESPACE
+# Arguments:
+#   None
+##################################################
+restore_avatars() {
+  echo "Restoring Remark42 avatar files ..."
+
+  # Get latest avatars backup
+  backup_source_path=$(find "${REMARK_BACKUP_DIR}" -name '*avatars.tar.gz' | sort | tail -n1)
+
+  # Confirmation prompt
+  confirm "${backup_source_path}"
+
+  tmp="${REMARK_BACKUP_DIR}/avatars"
+  mkdir -p "${tmp}"
+  echo "Extracting ${backup_source_path} to ${tmp} ..."
+  tar -xf "${backup_source_path}" -C "${tmp}"
+
+  pod=$(get_pod_name "${REMARK_LABEL}" "${REMARK_NAMESPACE}")
+  pod_path="${REMARK_NAMESPACE}/${pod}:var"
+  echo "Copying ${tmp} to ${pod_path} ..."
+  kubectl cp "${tmp}" "${pod_path}"
+
+  echo "Cleaning up ..."
+  rm -rf "${tmp}"
+}
+
+##################################################
+# Restore Remark42 image files.
+# Globals:
+#   REMARK_BACKUP_DIR
+#   REMARK_LABEL
+#   REMARK_NAMESPACE
+# Arguments:
+#   None
+##################################################
+restore_images() {
+  echo "Restoring Remark42 image files ..."
+
+  # Get latest images backup
+  backup_source_path=$(find "${REMARK_BACKUP_DIR}" -name '*images.tar.gz' | sort | tail -n1)
+
+  # Confirmation prompt
+  confirm "${backup_source_path}"
+
+  tmp="${REMARK_BACKUP_DIR}/pictures"
+  mkdir -p "${tmp}"
+  echo "Extracting ${backup_source_path} to ${tmp} ..."
+  tar -xf "${backup_source_path}" -C "${tmp}"
+
+  pod=$(get_pod_name "${REMARK_LABEL}" "${REMARK_NAMESPACE}")
+  pod_path="${REMARK_NAMESPACE}/${pod}:var"
+  echo "Copying ${tmp} to ${pod_path} ..."
+  kubectl cp "${tmp}" "${pod_path}"
+
+  echo "Cleaning up ..."
+  rm -rf "${tmp}"
 }
 
 ##################################################
@@ -46,7 +112,9 @@ restore_remark42() {
 #   None
 ##################################################
 main() {
-  restore_remark42
+  restore_backup
+  restore_avatars
+  restore_images
   echo "Success."
 }
 
