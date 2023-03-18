@@ -97,7 +97,7 @@ main() {
     exit 1
   fi
 
-  cleanup "${REMARK_BACKUP_DIR}" 30
+  cleanup "${REMARK_BACKUP_DIR}" 90
   echo "Success."
 }
 
