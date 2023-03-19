@@ -1,6 +1,6 @@
 #!/bin/sh
 
-CLICKHOUSE_BACKUP_VERSION=1.3.1
+CLICKHOUSE_BACKUP_VERSION=2.2.0
 
 ##################################################
 # Cleanup files but the most recent amount specified.
